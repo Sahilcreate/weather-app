@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 
 //make an object with only the data needed for our app
-class dayData {
+class ConditionData {
   constructor (object) {
     this.cloudCover = object.cloudcover;
     this.conditions = object.conditions;
@@ -9,7 +9,7 @@ class dayData {
     this.time = format(new Date(), 'HH:mm:ss');
     this.feelslike = object.feelslike;
     this.humidity = object.humidity;
-    this.icon = 'do something about different icons';
+    this.icon = object.icon;
     this.precipprob = object.precipprob;
     this.sunrise = object.sunrise;
     this.sunset = object.sunset;
@@ -20,4 +20,25 @@ class dayData {
   }
 }
 
-export { dayData };
+class ForecastData extends ConditionData {
+  constructor (object) {
+    super(object);
+    this.date = format(object.datetime, 'yyyy-MM-dd');
+  }
+}
+
+class AddressData {
+  constructor (jsonFile) {
+    this.description = jsonFile.description;
+    this.latitude = jsonFile.latitude;
+    this.longitude = jsonFile.longitude;
+    this.address = jsonFile.resolvedAddress;
+    this.timezone = jsonFile.timezone;
+  }
+}
+
+export { 
+  ConditionData,
+  ForecastData,
+  AddressData
+};

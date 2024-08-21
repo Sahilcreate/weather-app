@@ -1,10 +1,6 @@
-import { fetchData, processData } from './api';
+import { addEvents } from './eventHandlers';
+import { searchPlace } from './controller';
+import './style.css';
 
-fetchData('delhi').then(
-  function(response) {
-    console.log(response);
-    const processedData = processData(response);
-    console.log(processedData);
-  }
-);
-
+addEvents();
+searchPlace('Tokyo');

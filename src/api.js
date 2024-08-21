@@ -1,26 +1,26 @@
-import { dayData } from './classes';
+//fetch the data asynchronously
+async function fetchData(placeName) {
+  try {
+    const metricUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${placeName}?unitGroup=metric&key=AG6NRQ6DEMRT8VKZBVAG3Q6FB`;
+    const usUrl = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${placeName}?unitGroup=us&key=AG6NRQ6DEMRT8VKZBVAG3Q6FB`;
 
-async function fetchData(place) {
-  const weatherData = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${place}?key=AG6NRQ6DEMRT8VKZBVAG3Q6FB`);
-  return weatherData.json();
-}
+    const metricResponse = await fetch(metricUrl, {mode: 'cors'});
+    const usResponse = await fetch(usUrl, {mode: "cors"});
 
+    if(!metricResponse.ok || !usResponse.ok) {
+      throw new Error(`Failed to fetch weather data: ${metricResponse.status}(metricData), ${usResponse}(usData)`);
+    }
 
-
-function processData(jsonFile) {
-  const currentConditions = new dayData(jsonFile.currentConditions);
-  const upcomingDays = [];
-  for (let i = 0; i < 7; i++) {
-    upcomingDays.push(new dayData(jsonFile.days[i]));
+    const metricWeatherData = await metricResponse.json();
+    const usWeatherData = await usResponse.json()
+    
+    return { metricWeatherData, usWeatherData };
+  } catch (error) {
+    console.error('Error: ', error);
+    throw error;
   }
-
-  return {
-    currentConditions, 
-    upcomingDays
-  };
 }
 
 export {
-  fetchData,
-  processData
+  fetchData
 };

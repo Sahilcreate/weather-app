@@ -1,0 +1,93 @@
+
+
+/* 
+ *  SahilCreate's code 
+*/
+:root {
+  --gray: #ccc;
+  --white: white;
+  --blue: #2196F3;
+}
+
+
+/*
+ *  HEADER SECTION
+*/
+
+body {
+  height: 100vh;
+  background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* HEADER Slider Section */
+.header {
+  border: 1px solid black;
+}
+
+.unit-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.unit-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 34px;
+  background-color: var(--gray);
+  /* -webkit-transition: 0.4s; */
+  transition: 0.4s; 
+}
+
+.switch-slider::before {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  /* content: "°C"; */
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  border-radius: 50%;
+  background-color: var(--white);
+  /* -webkit-transition: 0.4s; */
+  transition: 0.4s; 
+}
+
+/* .unit-celcius::before {
+  content: "°C";
+}
+
+.unit-fahrenheit::before {
+  content: "°F";
+} */
+
+input:checked + .switch-slider {
+  background-color: var(--blue);
+}
+
+input:focus + .switch-slider {
+  box-shadow: 0 0 1px var(--blue);
+}
+
+input:checked + .switch-slider::before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+  /* content: "°F"; */
+}
