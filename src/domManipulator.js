@@ -1,23 +1,9 @@
 import { parse, format } from "date-fns";
 
 function renderData (data) {
-  /* Clear the DOM */
-  const locationSummary = document.querySelector('.location-summary');
-  const locationDesc = document.querySelector('.location-desc');
-  const conditionIcon = document.querySelector('.condition-summary-icon');
-  const conditionDesc = document.querySelector('.condition-summary-desc');
-  const conditionCards = document.querySelector('.current-condition-cards');
-  const forecastDesc = document.querySelector('.forecast-desc');
-  const forecastCards = document.querySelector('.forecast-cards');
+  const cachedElements = cacheElements();
 
-  clearElement(locationSummary);
-  clearElement(locationDesc);
-  clearElement(conditionIcon);
-  clearElement(conditionDesc);
-  clearElement(conditionCards);
-  clearElement(forecastDesc);
-  clearElement(forecastCards);
-
+  clearElements(cachedElements);
 
   /*
    *  Create Location Description Dynamically
@@ -25,48 +11,48 @@ function renderData (data) {
   const locationAddress = document.createElement('div');
   locationAddress.className = 'location-summary-address';
   locationAddress.textContent = data.locationData.address;
-  locationSummary.appendChild(locationAddress);
+  cachedElements.locationSummary.appendChild(locationAddress);
 
   const locationDateTime = document.createElement('div');
   locationDateTime.className = 'location-summary-datetime';
   locationDateTime.textContent =`${formatDataDate(data.currentConditions.date)} | ${formatDataTime(data.currentConditions.time)}`; 
-  locationSummary.appendChild(locationDateTime);
+  cachedElements.locationSummary.appendChild(locationDateTime);
 
   const locationLat = document.createElement('div');
   locationLat.className = 'location-desc-lat location-desc-text';
   locationLat.textContent = `Lat: ${data.locationData.latitude}`;
-  locationDesc.appendChild(locationLat);
+  cachedElements.locationDesc.appendChild(locationLat);
 
   const locationLon = document.createElement('div');
   locationLon.className = 'location-desc-lon location-desc-text';
   locationLon.textContent = `Lon: ${data.locationData.longitude}`;
-  locationDesc.appendChild(locationLon);
+  cachedElements.locationDesc.appendChild(locationLon);
 
   const locationZone = document.createElement('div');
   locationZone.className = 'location-desc-timezone location-desc-text';
   locationZone.textContent = `TimeZone: ${data.locationData.timezone}`;
-  locationDesc.appendChild(locationZone);
+  cachedElements.locationDesc.appendChild(locationZone);
 
   /*
    *  Create Current Conditons dynamically
    */
-  conditionIcon.innerHTML = selectIcon(data.currentConditions.icon);
+  cachedElements.conditionIcon.innerHTML = selectIcon(data.currentConditions.icon);
 
   const conditionDescText = document.createElement('div');
   conditionDescText.className = 'condition-summary-desc-text condition-summary-desc-heading';
-  conditionDescText.textContent = data.currentConditions.conditions;
-  conditionDesc.appendChild(conditionDescText);
+  conditionDescText.textContent = `${data.currentConditions.conditions}`;
+  cachedElements.conditionDesc.appendChild(conditionDescText);
 
   const conditionDescTemp = document.createElement('div');
-  conditionDescText.className = 'condition-summary-desc-text condition-summary-desc-temp';
+  conditionDescTemp.className = 'condition-summary-desc-text condition-summary-desc-temp';
   const tempUnit = checkTempUnit();
-  conditionDescText.textContent = `Temp: ${data.currentConditions.temp}${tempUnit}`;
-  conditionDesc.appendChild(conditionDescTemp);
+  conditionDescTemp.textContent = `Temperature: ${data.currentConditions.temp}${tempUnit}`;
+  cachedElements.conditionDesc.appendChild(conditionDescTemp);
 
   const conditionDescFeelsLike = document.createElement('div');
-  conditionDescText.className = 'condition-summary-desc-text condition-summary-desc-feelslike';
-  conditionDescText.textContent = `Temp: ${data.currentConditions.feelslike}${tempUnit}`;
-  conditionDesc.appendChild(conditionDescFeelsLike);
+  conditionDescFeelsLike.className = 'condition-summary-desc-text condition-summary-desc-feelslike';
+  conditionDescFeelsLike.textContent = `Feels Like: ${data.currentConditions.feelslike}${tempUnit}`;
+  cachedElements.conditionDesc.appendChild(conditionDescFeelsLike);
 
   /* Current conditions cards */
 
@@ -95,7 +81,7 @@ function renderData (data) {
   windCardTextWrapper.appendChild(windValue);
   windCard.appendChild(windCardTextWrapper);
 
-  conditionCards.appendChild(windCard);
+  cachedElements.conditionCards.appendChild(windCard);
 
   /* Humidity Card */
   const humidityCard = document.createElement('div');
@@ -111,7 +97,7 @@ function renderData (data) {
   humidityValue.textContent = `${data.currentConditions.humidity}%`;
 
   humidityCard.appendChild(humidityValue);
-  conditionCards.appendChild(humidityCard);
+  cachedElements.conditionCards.appendChild(humidityCard);
 
   /* CloudCover Card */
   const cloudCard = document.createElement('div');
@@ -119,7 +105,7 @@ function renderData (data) {
 
   const cloudHeading = document.createElement('div');
   cloudHeading.className = 'cloud-heading card-heading';
-  cloudHeading.textContent = 'Cloud Cover';
+  cloudHeading.textContent = 'Cloud';
   cloudCard.appendChild(cloudHeading);
 
   const cloudValue = document.createElement('div');
@@ -127,7 +113,7 @@ function renderData (data) {
   cloudValue.textContent = `${data.currentConditions.cloudCover}%`;
 
   cloudCard.appendChild(cloudValue);
-  conditionCards.appendChild(cloudCard);
+  cachedElements.conditionCards.appendChild(cloudCard);
 
   /*  Visibility Card */
   const visibilityCard = document.createElement('div');
@@ -144,7 +130,7 @@ function renderData (data) {
   visibilityValue.textContent = `${data.currentConditions.visibility} ${distanceUnit}`;
 
   visibilityCard.appendChild(visibilityValue);
-  conditionCards.appendChild(visibilityCard);
+  cachedElements.conditionCards.appendChild(visibilityCard);
 
   /* Rain Card */
   const rainCard = document.createElement('div');
@@ -160,7 +146,7 @@ function renderData (data) {
   rainValue.textContent = `${data.currentConditions.precipprob}%`;
 
   rainCard.appendChild(rainValue);
-  conditionCards.appendChild(rainCard);
+  cachedElements.conditionCards.appendChild(rainCard);
 
   /* Sunrise Card */
   const sunriseCard = document.createElement('div');
@@ -176,7 +162,7 @@ function renderData (data) {
   sunriseValue.textContent = `${formatDataTime(data.currentConditions.sunrise)}`;
 
   sunriseCard.appendChild(sunriseValue);
-  conditionCards.appendChild(sunriseCard);
+  cachedElements.conditionCards.appendChild(sunriseCard);
 
   /* Sunset Card */
   const sunsetCard = document.createElement('div');
@@ -192,13 +178,13 @@ function renderData (data) {
   sunsetValue.textContent = `${formatDataTime(data.currentConditions.sunset)}`;
 
   sunsetCard.appendChild(sunsetValue);
-  conditionCards.appendChild(sunsetCard);
+  cachedElements.conditionCards.appendChild(sunsetCard);
 
 
   /*
    *  FORECAST SECTION
    */
-  forecastDesc.textContent = data.locationData.description;
+  cachedElements.forecastDesc.textContent = `❛${data.locationData.description}❜`;
 
   const forecastDaysNum = 7;
   for (let i = 0; i < forecastDaysNum; i++) {
@@ -229,8 +215,40 @@ function renderData (data) {
     forecastCardTextWrapper.appendChild(forecastCardDesc);
 
     forecastCard.appendChild(forecastCardTextWrapper);
-    forecastCards.appendChild(forecastCard);
+    cachedElements.forecastCards.appendChild(forecastCard);
   }
+}
+
+function clearElements (elements) {
+  elements.forecastDesc.textContent = "";
+
+  //'elements' is an object of cached elements
+  Object.values(elements).forEach((element) => {
+    let lastChild = element.lastElementChild;
+    while(lastChild) {
+      element.removeChild(lastChild);
+      lastChild = element.lastElementChild;
+    }
+  })
+}
+
+function cacheElements () {
+  const conditionCards = document.querySelector('.current-condition-cards');
+  const conditionDesc = document.querySelector('.condition-summary-desc');
+  const conditionIcon = document.querySelector('.condition-summary-icon');
+  const forecastCards = document.querySelector('.forecast-cards');
+  const forecastDesc = document.querySelector('.forecast-desc');
+  const locationDesc = document.querySelector('.location-desc');
+  const locationSummary = document.querySelector('.location-summary');
+
+  return { conditionCards,
+    conditionDesc,
+    conditionIcon,
+    forecastCards,
+    forecastDesc,
+    locationDesc,
+    locationSummary
+  };
 }
 
 function getDay (dateString) {
@@ -375,15 +393,21 @@ function checkDistUnit () {
 }
 
 function showWindDirection (direction) {
-  return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(${direction})" width="50" height="50"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 6V18M12 6L7 11M12 6L17 11" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>`
-} 
-
-function clearElement (element) {
-  let lastChild = element.lastElementChild;
-  while(lastChild) {
-    element.removeChild(lastChild);
-    lastChild = element.lastElementChild;
-  }
+  return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(${direction})" width="30" height="30"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 6V18M12 6L7 11M12 6L17 11" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>`
 }
 
-export { renderData };
+function showLoadingScreen () {
+  clearElements(cacheElements());
+  const loadingScreen = document.querySelector('.loading-screen');
+  loadingScreen.style.display = "block";
+}
+
+function hideLoadingScreen () {
+  const loadingScreen = document.querySelector('.loading-screen');
+  loadingScreen.style.display = "none";
+}
+
+export { renderData,
+  showLoadingScreen,
+  hideLoadingScreen
+ };

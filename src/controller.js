@@ -1,6 +1,6 @@
 import { ConditionData, ForecastData,AddressData } from './classes';
 import { fetchData } from './api';
-import { renderData } from './domManipulator';
+import { renderData, showLoadingScreen, hideLoadingScreen } from './domManipulator';
 
 let processedMetricData;
 let processedUsData;
@@ -22,21 +22,20 @@ function processData(jsonFile) {
 
 async function searchPlace(location) {
   try {
+    showLoadingScreen();
     const response = await fetchData(location);
     processedMetricData = processData(response.metricWeatherData);
     processedUsData = processData(response.usWeatherData);
-
+  } catch (error) {
+    console.error('Error:', error);
+  } finally {
+    hideLoadingScreen();
     const metricUsed = document.querySelector('.unit-switch-checkbox');
     if(metricUsed.checked) {
       renderData(processedUsData);
     } else {
       renderData(processedMetricData);
     }
-    console.log(response);
-    console.log(processedMetricData);
-    console.log(processedUsData);
-  } catch (error) {
-    console.error('Error:', error);
   }
 }
 
